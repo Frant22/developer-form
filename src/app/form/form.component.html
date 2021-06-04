@@ -1,0 +1,211 @@
+<h1 [hidden]="hasSubmitted">
+  Fill the form below:
+</h1>
+<form
+  action="#"
+  name="candidateForm"
+  class="form container form-group"
+  [formGroup]="candidateForm"
+  (ngSubmit)="onSubmit()"
+  [hidden]="hasSubmitted"
+  novalidate
+>
+  <label for="firstName" class="form__row control-label">
+    Name:
+  </label>
+  <input
+    name="firstName"
+    class="form-control"
+    id="firstName"
+    type="text"
+    formControlName="firstName"
+    required
+  >
+  <span
+    class="alert alert-danger"
+    *ngIf="firstName.getError('required') && (firstName.touched || firstName.dirty)"
+  >
+    Name is required!
+  </span>
+
+  <label for="lastName" class="form__row">
+    Last name:
+  </label>
+  <input
+    name="lastName"
+    class="form-control"
+    id="lastName"
+    type="text"
+    formControlName="lastName"
+    required
+  >
+  <span
+    class="alert alert-danger"
+    *ngIf="lastName.getError('required') && (lastName.touched || lastName.dirty)"
+  >
+    Last name is required!
+  </span>
+
+  <mat-form-field appearance="fill" class="form__calendar">
+    <mat-label class="form__row control-label">
+      <div>Date of birth</div>
+    </mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      formControlName="dateOfBirth"
+      class="form-control"
+      required
+    >
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-datepicker-toggle class="form__toggle" matSuffix [for]="picker"></mat-datepicker-toggle>
+  </mat-form-field>
+  <mat-error
+    class="alert alert-danger"
+    *ngIf="dateOfBirth.getError('required') && (dateOfBirth.touched || dateOfBirth.dirty)"
+  >
+    Date of birth is required!
+  </mat-error>
+  
+  <label for="jsTechnology" class="form-row">
+    Framework:
+  </label>
+  <select
+    name="jsTechnology"
+    class="form-control"
+    id="jsTechnology"
+    formControlName="jsTechnology"
+    (change)="onFrameworkChange($event)"
+    required
+  >
+    <option value="" disabled>Select framework</option>
+    <option
+      *ngFor="let framework of technologies | keyvalue"
+      [value]="framework.key"
+    >
+      {{framework.key}}
+    </option>
+  </select>
+  <span
+    class="alert alert-danger"
+    *ngIf="jsTechnology.getError('required') && jsTechnology.touched"
+  >
+    Select framework!
+  </span>
+
+  <div class="version" *ngIf="selectedFramework">
+    <label for="technologyVersion" class="form__row">
+      Framework version:
+    </label>
+    <select
+      name="version"
+      class="form-control"
+      id="technologyVersion"
+      formControlName="technologyVersion"
+      required
+    >
+      <option
+        *ngFor="let versions of technologies[selectedFramework] | keyvalue"
+        [value]="versions.value"
+      >
+        {{versions.value}}
+      </option>
+    </select>
+  </div>
+  <span
+    class="alert alert-danger"
+    *ngIf="technologyVersion.getError('required') && technologyVersion.touched"
+  >
+    Select versions!
+  </span>
+
+  <label for="email" class="form__row">
+    Email:
+  </label>
+  <input
+    name="email"
+    class="form-control"
+    id="email"
+    type="text"
+    formControlName="email"
+    email
+    required
+  >
+  <span
+    class="alert alert-danger"
+    *ngIf="email.getError('required') && email.touched"
+  >
+    Email is required!
+  </span>
+  <span
+    class="alert alert-danger"
+    *ngIf="email.getError('email') && email.touched"
+  >
+    Email is invalid!
+  </span>
+  <span
+    class="alert alert-danger"
+    *ngIf="email.getError('emailExists')"
+  >
+    Email is already exist!
+  </span>
+
+  <div formArrayName="hobbies">
+    <fieldset class="form__hobby">
+      <div *ngFor="let hobby of hobbies.controls; let i=index">
+        <div [formGroupName]="i">
+          <label for="name" class="form__row">
+            &nbsp; Hobby name:
+          </label>
+          <input
+            id="name"
+            type="text"
+            class="form-control form-control-sm"
+            formControlName="name"
+            autocomplete="disabled"
+          >
+          <label for="duration" class="form__row">
+            &nbsp; Experience:
+          </label>
+          <input
+            id="duration"
+            class="form-control form-control-sm"
+            type="text"
+            formControlName="duration"
+            autocomplete="disabled"
+          >
+        </div>
+        <br>
+        <button (click)="removeHobby(i)" class="btn btn-warning btn-sm">
+          Remove hobby
+        </button>
+      </div>
+    </fieldset>
+  </div>
+  <span
+    class="alert alert-warning"
+    *ngIf="hobbies.getError('hobbyExist')"
+  >
+    Hobby info required!
+  </span>
+
+  <button
+    type="button"
+    class="btn btn-secondary btn-sm"
+    (click)="addNewHobby()"
+  >
+      Add hobby
+  </button>
+
+  <button
+    type="submit"
+    class="btn btn-primary"
+    [disabled]="!candidateForm.valid"
+  >
+    Send form
+  </button>
+</form>
+
+<div class="alert alert-success" *ngIf="hasSubmitted">
+  Form successfully sent!
+</div>
